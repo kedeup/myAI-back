@@ -17,7 +17,7 @@ import java.util.Objects;
  * @Author kede·W  on  2023/3/21
  */
 @RestControllerAdvice(basePackages = "com.freedom.chatmodule.controller")
-public class ResponseAdvice implements ResponseBodyAdvice {
+public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Autowired
     private ObjectMapper objectMapper;

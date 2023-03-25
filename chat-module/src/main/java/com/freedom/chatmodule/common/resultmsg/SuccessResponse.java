@@ -1,10 +1,12 @@
 package com.freedom.chatmodule.common.resultmsg;
 
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 /**
  * @Author kede·W  on  2023/3/20
  */
+@Data
 public class SuccessResponse <T>{
     private int code;
     private String message;
