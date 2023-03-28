@@ -31,9 +31,9 @@ public class OpenaiRequestUtil {
     @Autowired
     AesCryptoUtil aesCryptoUtil;
 
-    public OpenaiRequestUtil(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+//    public OpenaiRequestUtil(RestTemplate restTemplate) {
+//        this.restTemplate = restTemplate;
+//    }
 
     public  String sendGetRequest(String url, HttpHeaders headers) {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
@@ -47,14 +47,25 @@ public class OpenaiRequestUtil {
         return response.getBody();
     }
 
-    public <T> ResponseEntity<T> get(String url, Class<T> responseType,Object body) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + openAiProperties.getApikey());
+    public <T> T get(String url, Class<T> responseType,Object body) {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36");
+//        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+//        ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, entity, responseType);
+        T forObject = restTemplate.getForObject(url, responseType);
+        return forObject;
+    }
 
-        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-        ResponseEntity<T> response = restTemplate.exchange(url, HttpMethod.GET, entity, responseType);
-        return response;
+    public <T> T get(String url, Class<T> responseType) {
+        T forObject = restTemplate.getForObject(url, responseType);
+        return forObject;
+    }
+
+    public String get(String url) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54");
+        String forObject = restTemplate.getForObject(url, String.class);
+        return forObject;
     }
 
 

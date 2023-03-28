@@ -25,3 +25,20 @@
    这种写法的好处是可以让方法的返回类型根据调用时传入的类型参数而动态变化。
    例如，如果你调用这个方法并传入了一个String.class作为类型参数，那么这个方法的返回类型就是String类型；
    如果你传入了一个Integer.class作为类型参数，那么这个方法的返回类型就是Integer类型。
+
+4.在 Spring Boot 项目中，实体类不一定需要手动实现 Serializable 接口。这是因为 Spring Boot 的默认序列化器 Jackson 支持 Java 对象到 JSON 的序列化和反序列化操作，并且可以自动地处理 Serializable 接口。
+
+  然而，如果你需要将对象存储在 HttpSession 中或者使用 Spring Session 进行分布式会话管理，那么你的实体类必须实现 Serializable 接口。此外，在某些情况下，手动实现 Serializable 接口也有助于提高序列化的性能。
+
+4.1HttpSession 是 Java Web 应用程序中的一个会话管理机制，它可以在多个请求之间存储和共享数据。当用户发起一个 HTTP 请求时，服务器会为其创建一个唯一的 HttpSession 对象，并将该对象与当前用户的浏览器关联起来。这样，在用户的浏览器发送后续请求时，服务器就可以通过 HttpSession 来识别该用户，并且可以从 HttpSession 中获取之前保存的数据。
+
+   Spring Session 是基于 Spring Framework 的分布式会话管理框架，它提供了一种方式来管理分布式环境中的 HttpSession。使用 Spring Session 可以将 HttpSession 存储到 Redis、MongoDB 或者其他支持分布式存储的地方。这样，在不同的服务器之间共享 HttpSession 数据就变得非常容易。
+
+   因此，如果要将对象存储在 HttpSession 中或者使用 Spring Session 进行分布式会话管理，你需要确保对象可序列化（Serializable），即实现 Serializable 接口。这是因为 HttpSession 和 Spring Session 都需要将对象序列化为字节流，以便于存储和传输。
+
+
+5.  如果你使用 RestTemplate 来进行 HTTP 请求，那么实体类是否需要实现 Serializable 接口就取决于你的具体使用场景。
+
+  如果你的应用程序只是简单地将 Java 对象转换为 JSON 或者 XML 格式，并通过 RestTemplate 进行 HTTP 请求和响应，那么实体类不需要实现 Serializable 接口。因为在这种情况下，Java 对象只是被序列化为 JSON 或者 XML 格式，而不是二进制数据流。RestTemplate 使用 Jackson 序列化器来将 Java 对象转换为 JSON，该序列化器支持 Java 对象到 JSON 的序列化和反序列化操作，同时也可以自动地处理 Serializable 接口。
+
+  然而，如果你的应用程序需要将 Java 对象作为请求参数或响应结果传输到另一个 JVM 中，那么实体类必须实现 Serializable 接口。因为在这种情况下，Java 对象会被序列化为二进制数据流，以便于在网络上进行传输。如果你的实体类没有实现 Serializable 接口，那么在序列化或反序列化时就会抛出 NotSerializableException 异常。

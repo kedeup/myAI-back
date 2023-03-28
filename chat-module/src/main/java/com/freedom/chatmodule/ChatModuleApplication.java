@@ -1,14 +1,25 @@
 package com.freedom.chatmodule;
 
+import com.freedom.chatmodule.service.BclientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //@SpringBootApplication注解包含了@EnableAutoConfiguration注解，它会自动扫描classpath下的各种jar包，并根据其中的配置自动配置数据源等组件
 @SpringBootApplication
-public class ChatModuleApplication {
+public class ChatModuleApplication implements CommandLineRunner {
+
+    @Autowired
+    private BclientService bclientService;
 
     public static void main(String[] args) {
         SpringApplication.run(ChatModuleApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        bclientService.requestDanmaku();
     }
 
 }
