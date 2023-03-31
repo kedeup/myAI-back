@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
  */
 
 @Configuration
-//@EnableWebSocket
+@EnableWebSocket
 public class WsMyClientConfig{
 
     @Bean

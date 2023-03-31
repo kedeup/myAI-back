@@ -21,6 +21,10 @@ public class BheartDanceService {
     public static final String heartInfo = "0000001f0010000100000002000000015b6f626a656374204f626a6563745d";
 
     public void startHeartDance(WebSocketSession session){
+        if (!session.isOpen()){
+            log.info("session已断 ，心跳失败");
+            return;
+        }
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             try {
                 byte[] bytes1 = DatatypeConverter.parseHexBinary(heartInfo);

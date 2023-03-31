@@ -8,24 +8,16 @@ import com.freedom.chatmodule.entity.Danmaku.HostServer;
 import com.freedom.chatmodule.httptool.danmaku.DanmakuInfo;
 import com.freedom.chatmodule.tools.danmaku.ByteTools;
 import com.freedom.chatmodule.tools.danmaku.DanmakuTools;
-import com.freedom.chatmodule.tools.danmaku.TimeTools;
 import com.freedom.chatmodule.websocket.DanmakuSessionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.stomp.StompHeaders;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 
 import javax.xml.bind.DatatypeConverter;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -48,8 +40,8 @@ public class BclientService {
 
 
     public void requestDanmaku() throws JsonProcessingException {
-//        long roomId = 5975890;
-        long roomId = 27248922;
+        long roomId = 26989116;  //小之
+//        long roomId = 27248922;
         long uid = 0;  //我的xioazhi
         Conf conf = danmakuInfo.httpGetConf(roomId);
         List<HostServer> hostServerList = conf.getHost_list();

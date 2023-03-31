@@ -93,7 +93,6 @@ public class OpenaiRequestUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         token = aesCryptoUtil.decrypt(token);
-        System.out.println("几米后");
         System.out.println(token);
         token = token.equals("") ? openAiProperties.getApikey() : token;
         headers.add("Authorization", "Bearer " + token);

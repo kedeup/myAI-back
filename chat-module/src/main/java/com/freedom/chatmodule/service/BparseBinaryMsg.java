@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.freedom.chatmodule.common.enums.Danmaku.DMMessageType;
 import com.freedom.chatmodule.entity.Danmaku.DataPacket;
+import com.freedom.chatmodule.entity.Danmaku.DmMsg;
 import com.freedom.chatmodule.tools.danmaku.BinaryTools;
 import com.freedom.chatmodule.tools.danmaku.ByteTools;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class BparseBinaryMsg {
-    public static void parseBinaryMsg(ByteBuffer buffer) {
+    public static DmMsg parseBinaryMsg(ByteBuffer buffer) {
         BinaryTools binaryTools = new BinaryTools(buffer);
         try {
             DataPacket dataPacket = binaryTools.getDataPacket();
@@ -40,88 +41,103 @@ public class BparseBinaryMsg {
 
             switch (protocolVersion) {
                 case 0:
-                    parseNotice(content, operationType);
-                    break;
+                    DmMsg dmMsgNotice = parseNotice(content, operationType);
+                    return dmMsgNotice;
                 case 1:
                     //语句
-                    parsePopularity(content, operationType);
-                    break;
+                    DmMsg dmMsgPopularity = parsePopularity(content, operationType);
+                    return dmMsgPopularity;
                 case 2:
                     log.info("协议号2：{}",protocolVersion);
-                    break;
+                    return new DmMsg(99,"协议号2忽略");
+
                 case 3:
                     //broli解压
                     byte[] decompress = decompress(content);
                     List<byte[]> contentList = binaryDecode(decompress);
-                    parseNoticeList(contentList,operationType);
-                    break; //可选
+                    DmMsg dmMsgList = parseNoticeList(contentList, operationType);
+                    return dmMsgList;
                 default: //可选
                     //语句
                     log.error("数据包解析失败！!!获取到的版本号为：{}", protocolVersion);
+                    return new DmMsg(99,"非弹幕信息忽略");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return new DmMsg(99,"解析失败");
     }
 
-    private static void parseNoticeList(List<byte[]> contentList, int operationType) {
+    private static DmMsg parseNoticeList(List<byte[]> contentList, int operationType) {
+        ArrayList<DmMsg> dmMsgList = new ArrayList<>();
         contentList.forEach(content ->{
             try {
-                parseNotice(content, operationType);
+                DmMsg dmMsg = parseNotice(content, operationType);
+                dmMsgList.add(dmMsg);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         });
+        return new DmMsg(12,dmMsgList);
     }
 
-    private static void parseObject(JSONObject jsonObject){
+    private static DmMsg parseObject(JSONObject jsonObject){
         String cmd = jsonObject.get("cmd").toString();
         if(cmd.equals(DMMessageType.DANMU_MSG.getCmd())){
             JSONArray info1 = (JSONArray) jsonObject.get("info");
-            log.info("info Json :{}",info1);
-            String dmMsg = info1.get(1).toString();
+//            log.info("info Json :{}",info1);
+            String dmContent = info1.get(1).toString();
             JSONArray speakInfo = (JSONArray)info1.get(2);
             String speakName = speakInfo.get(1).toString();
+            JSONObject replyObj = new JSONObject();
+            replyObj.put("speakerName",speakName);
+            replyObj.put("dmContent",dmContent);
+            log.info("{} 说, {}", speakName, dmContent);
 
-            log.info("{} 说, {}", speakName, dmMsg);
+            DmMsg  dmMsg = new DmMsg(DMMessageType.DANMU_MSG.getCode(),replyObj);
+            return dmMsg;
 
         }else {
             log.info("非弹幕信息忽略！");
+            return new DmMsg(99,"非弹幕信息忽略");
         }
     }
 
 
-    private static void parseNotice(byte[] content, int operationType) throws UnsupportedEncodingException {
+    private static DmMsg parseNotice(byte[] content, int operationType) throws UnsupportedEncodingException {
         switch (operationType) {
             case 5:
                 String notice = ByteTools.byteArrayToString(content);
-                log.info("字符串结构：{}",notice);
+//                log.info("字符串结构：{}",notice);
                 JSONObject jsonObject = JSON.parseObject(notice);
-                parseObject(jsonObject);
+                DmMsg dmMsg = parseObject(jsonObject);
+                return dmMsg;
 //处理返回对象（目前只关注 弹幕信息
-                break; //可选
             default: //可选
                 //语句
                 log.debug("通知解析失败！!!获取到的操作类型为：{}", operationType);
+                return new DmMsg(8,"操作类型为5的返回信息");
+
         }
     }
 
-    private static void parsePopularity(byte[] content, int operationType) throws UnsupportedEncodingException {
+    private static DmMsg parsePopularity(byte[] content, int operationType) throws UnsupportedEncodingException {
 
         switch (operationType) {
             case 3:
                 int popularity = ByteTools.getInt(content);
                 log.info("解析后的人气值：{}", popularity);
-                break; //可选
+                return new DmMsg(0, popularity);
             case 8:
                 //语句
                 String okCode = ByteTools.byteArrayToString(content);
                 log.info("操作类型为8的返回信息：{}", okCode);
-                break; //可选
+                return new DmMsg(8,"操作类型为8的返回信息");
+
             default: //可选
                 //语句
                 log.debug("数据包解析失败！!!获取到的操作类型为：{}", operationType);
+                return new DmMsg(8,"数据包解析失败！!!获取到的操作类型为");
         }
 
     }
