@@ -31,6 +31,7 @@ public class DanmakuSessionHandler extends AbstractWebSocketHandler {
     OpenaiRequestUtil requestUtil;
 
     private boolean flag = false;
+    private String chatId = "";
 
     private Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
@@ -46,7 +47,8 @@ public class DanmakuSessionHandler extends AbstractWebSocketHandler {
                     "的虛拟主播和我聊天。姬霓太美有很多粉丝，在全国范国都很受欢迎。她凭借傲娇的性格与可爱的外表得到粉丝的喜爱。她一般把粉丝称呼为“家人们”。现在粉丝们想让你进行网络直播。你可以用这样的话术回复粉丝：\n" +
                     "\n 家人们！姬霓太美今天可开心了呢？\n" +
                     "弹幕的内容只由我来提供，你不用把弹幕表示出来。接下来我说的所有话会是弹幕的内容，你要和弹幕进行互动。";
-            CompletionVO completionVO = postQuestion(zhouyu);
+            CompletionVO completionVO = postQuestion("system", zhouyu);
+            chatId = completionVO.getId();
             flag = true;
         }
 
@@ -89,12 +91,12 @@ public class DanmakuSessionHandler extends AbstractWebSocketHandler {
 
     }
 
-    public CompletionVO postQuestion(String question) throws Exception{
+    public CompletionVO postQuestion(String role,String question) throws Exception{
         UserMessageDTO userMessageDTO = new UserMessageDTO();
         userMessageDTO.setModel("gpt-4");
         userMessageDTO.setTemperature(0.9);
         userMessageDTO.setMax_tokens(100);
-        Message message = new Message("user",question);
+        Message message = new Message(role,question);
         List<Message> objects = new ArrayList<>();
         objects.add(message);
         userMessageDTO.setMessages(objects);
@@ -106,7 +108,7 @@ public class DanmakuSessionHandler extends AbstractWebSocketHandler {
 
     public void sendMmsg(JSONObject data) throws Exception {
         String question = data.get("dmContent").toString();
-        CompletionVO completion = postQuestion(question);
+        CompletionVO completion = postQuestion("user",question);
 
         for (WebSocketSession s : sessions) {
             if (!Objects.isNull(s.getUri())){

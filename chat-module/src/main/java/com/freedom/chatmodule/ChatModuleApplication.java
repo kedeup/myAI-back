@@ -1,27 +1,42 @@
 package com.freedom.chatmodule;
 
 import com.freedom.chatmodule.service.BclientService;
+import com.freedom.chatmodule.service.QQ.QQBotManager;
+import com.freedom.chatmodule.utils.BeanUtil;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 //@SpringBootApplication注解包含了@EnableAutoConfiguration注解，它会自动扫描classpath下的各种jar包，并根据其中的配置自动配置数据源等组件
 @SpringBootApplication
-public class ChatModuleApplication implements CommandLineRunner {
-
+@MapperScan("com.freedom.chatmodule.domapper")
+//public class ChatModuleApplication implements CommandLineRunner {
+    public class ChatModuleApplication{
     @Autowired
     private BclientService bclientService;
 
+    @Autowired
+    QQBotManager qqBotManager;
+
     public static void main(String[] args) {
-        SpringApplication.run(ChatModuleApplication.class, args);
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ChatModuleApplication.class, args);
+        BeanUtil.applicationContext = applicationContext;
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        bclientService.requestDanmaku();
-    }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        bclientService.requestDanmaku();
+////        qqBotManager.startAllBots();
+//
+//    }
 
+//    @Override
+//    public void run(String... args) throws Exception {
+//        qqBotManager.startAllBots();
+//    }
 }
 
 //在Spring Boot项目中，主配置类一般是指一个带有@SpringBootApplication注解的Java类。这个注解包含了多个注解的元注解，用于启用Spring Boot自动配置、组件扫描和其他一些基本功能。

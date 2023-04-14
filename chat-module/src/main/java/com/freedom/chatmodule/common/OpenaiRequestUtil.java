@@ -74,6 +74,8 @@ public class OpenaiRequestUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("Authorization", "Bearer " + openAiProperties.getApikey());
+//        headers.add("OpenAI-Organization", "org-MYZ4d7CwlGlr7OrVkKbcSaVm");
+
         headers.add("User-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                 "Chrome/58.0.3029.110 Safari/537.3");
         String string = objectMapper.writeValueAsString(requestBody);
@@ -83,7 +85,7 @@ public class OpenaiRequestUtil {
         System.out.println(entity);
 
         ResponseEntity<T> response = restTemplate.exchange(
-                "https://api.openai.com/v1/chat/completions",
+                openAiProperties.getBaseUrl() + url,
                 HttpMethod.POST, entity, responseType);
         return response.getBody();
     }
@@ -96,6 +98,7 @@ public class OpenaiRequestUtil {
         System.out.println(token);
         token = token.equals("") ? openAiProperties.getApikey() : token;
         headers.add("Authorization", "Bearer " + token);
+//        headers.add("OpenAI-Organization", "org-MYZ4d7CwlGlr7OrVkKbcSaVm");
         headers.add("User-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                 "Chrome/58.0.3029.110 Safari/537.3");
         String string = objectMapper.writeValueAsString(requestBody);
@@ -105,7 +108,7 @@ public class OpenaiRequestUtil {
         System.out.println(entity);
 
         ResponseEntity<T> response = restTemplate.exchange(
-                "https://api.openai.com/v1/chat/completions",
+                openAiProperties.getBaseUrl() + url,
                 HttpMethod.POST, entity, responseType);
         return response.getBody();
     }

@@ -40,6 +40,11 @@ public class SuccessResponse <T>{
         return new SuccessResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), data);
     }
 
+    public static <T> SuccessResponse<T> denied(T denied) {
+        return new SuccessResponse<>(HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(), denied);
+    }
+
 //    public static <T> SuccessResponse<T> error(String message) {
 //        return new SuccessResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message);
 //    }
