@@ -1,7 +1,9 @@
 package com.freedom.chatmodule.domapper;
 
 import com.freedom.chatmodule.domain.UserInfo;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,5 @@ public interface UserInfoMapper {
     int updateByPrimaryKeySelective(UserInfo row);
 
     int updateByPrimaryKey(UserInfo row);
+    long getUserIdByUsername(String username);
 }

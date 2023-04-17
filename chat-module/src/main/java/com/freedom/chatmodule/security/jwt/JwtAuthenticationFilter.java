@@ -33,7 +33,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+            if (request.getRequestURI().startsWith("/wxfirstcheck")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             try {
                 String token = getTokenFromHeader(request.getHeader(AUTHORIZATION_HEADER));
@@ -61,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromHeader(String header) {
-        if (!header.isEmpty() && header.startsWith(TOKEN_PREFIX)) {
+        if (header != null && !header.isEmpty() && header.startsWith(TOKEN_PREFIX)) {
             return header.replace(TOKEN_PREFIX, "");
         }
         return null;

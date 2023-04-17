@@ -38,6 +38,7 @@ public class MySecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/login").permitAll()
+                .antMatchers("/wxfirstcheck/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

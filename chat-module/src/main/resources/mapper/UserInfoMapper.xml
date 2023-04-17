@@ -16,14 +16,17 @@
     from user_baseinfo
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="getUserIdByUsername" resultType="java.lang.Long">
+      SELECT id FROM user_baseinfo WHERE username = #{username,jdbcType=VARCHAR};
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user_baseinfo
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.freedom.chatmodule.domain.UserInfo">
     insert into user_baseinfo (id, username, age, 
       email)
-    values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+    values (IFNULL(#{id}, DEFAULT(id)), #{username,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER},
       #{email,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.freedom.chatmodule.domain.UserInfo">

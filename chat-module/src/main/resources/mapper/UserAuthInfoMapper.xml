@@ -26,11 +26,16 @@
     delete from user_auths
     where id = #{id,jdbcType=INTEGER}
   </delete>
+  <delete id="deleteByUserId">
+  delete from user_auths
+  where user_id = #{id,jdbcType=BIGINT}
+  </delete>
   <insert id="insert" parameterType="com.freedom.chatmodule.domain.UserAuthInfo">
-    insert into user_auths (id, user_id, identity_type, 
-      identifier, credential)
-    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, #{identityType,jdbcType=VARCHAR}, 
-      #{identifier,jdbcType=VARCHAR}, #{credential,jdbcType=VARCHAR})
+  insert into user_auths (id, user_id, identity_type,
+    identifier, credential)
+  values (IFNULL(#{id}, DEFAULT(id)),
+  #{userId,jdbcType=BIGINT}, #{identityType,jdbcType=VARCHAR},
+    #{identifier,jdbcType=VARCHAR}, #{credential,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.freedom.chatmodule.domain.UserAuthInfo">
     insert into user_auths

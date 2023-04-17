@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserAuthInfoMapper {
     int deleteByPrimaryKey(Integer id);
-
+    int deleteByUserId(Long id);
     int insert(UserAuthInfo row);
 
     int insertSelective(UserAuthInfo row);
